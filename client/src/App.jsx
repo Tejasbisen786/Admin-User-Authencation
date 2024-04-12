@@ -5,10 +5,14 @@ import AdminDashboard from "./components/AdminDashboard";
 import UserDashboard from "./components/UserDashboard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { isAdmin, isAuthenticated } from "./utils/auth";
 
 const App = () => {
+  const checkAdmin = isAdmin();
+  const checkAuth = isAuthenticated() && checkAdmin;
+
   return (
     <>
       <Router>
@@ -16,21 +20,14 @@ const App = () => {
           <Route path="/" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Register />} />
-          <ProtectedRoute
-            path="/user-dashboard"
-            element={<UserDashboard />}
-            isAdminRoute={false} // This is not an admin route
-          />
-          <ProtectedRoute
-            path="/admin-dashboard"
-            element={AdminDashboard} // Pass the component directly
-            isAdminRoute={true} // This is an admin route
-          />
+          {!checkAdmin ? <Route path="/user-dashboard" element={<UserDashboard />} /> : <Route path="*" element={<Navigate to="/admin-dashboard" replace />} />}
+          {checkAuth ? <Route path="/admin-dashboard" element={<AdminDashboard />} /> : <Route path="*" element={<Navigate to="/user-dashboard" replace />} />}
         </Routes>
       </Router>
       <ToastContainer />
     </>
   );
 };
+
 
 export default App;
