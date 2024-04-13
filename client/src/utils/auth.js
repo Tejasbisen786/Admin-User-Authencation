@@ -19,3 +19,7 @@ export const parseJwt = (token) => {
       return null;
   }
 };
+
+export const logout = () => {
+  localStorage.removeItem('token');
+};

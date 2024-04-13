@@ -1,8 +1,15 @@
 // AdminDashboard.js
 
 import React from "react";
+import { logout } from "../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  }
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -19,6 +26,7 @@ const AdminDashboard = () => {
             <li>
               <a href="#" className="text-gray-200 hover:text-white block">Settings</a>
             </li>
+            <button onClick={handleLogout} className="text-gray-200" >Logout</button>
             {/* Add more menu items as needed */}
           </ul>
         </nav>

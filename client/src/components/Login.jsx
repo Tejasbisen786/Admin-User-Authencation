@@ -8,6 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const checkAdmin = isAdmin();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -29,7 +30,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         const token = data.token;
         const decodedToken = parseJwt(token); // Use parseJwt function to decode token
-        if (decodedToken && isAdmin()) { // Check if user is admin
+        if (checkAdmin && decodedToken) { // Check if user is admin
           navigate("/admin-dashboard");
         } else {
           navigate("/user-dashboard");
