@@ -7,9 +7,30 @@ export const isAuthenticated = () => {
 
 export const isAdmin = () => {
   const token = localStorage.getItem('token');
-  const decodedToken = token ? JSON.parse(atob(token.split('.')[1])) : null;
-  return decodedToken && decodedToken.role === 'admin';
+  if (!token) {
+    return false; // No token, so definitely not an admin
+  }
+  try {
+    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    return decodedToken && decodedToken.role === 'admin';
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return false; // Error decoding token, so not an admin
+  }
 };
+
+
+export const currentAdmin = (token) => {
+  try {
+    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    console.log("decodedToken && decodedToken.role === 'admin'", decodedToken && decodedToken.role === 'admin')
+
+    return decodedToken && decodedToken.role === 'admin';
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return false;
+  }
+}
 
 // Function to decode JWT token
 export const parseJwt = (token) => {
