@@ -2,12 +2,18 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import { isAuthenticated, isAdmin, parseJwt } from "../utils/auth"; // Import parseJwt from auth.js
+import {
+  isAuthenticated,
+  isAdmin,
+  parseJwt,
+  currentAdmin,
+} from "../utils/auth"; // Import parseJwt from auth.js
 
-const Login = () => {
+const Login = ({ setIsLoggedIn, setIsAdmin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const checkAdmin = isAdmin();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -16,7 +22,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("http://localhost:8000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,10 +34,15 @@ const Login = () => {
         // Store the token in browser local storage
         localStorage.setItem("token", data.token);
         const token = data.token;
-        const decodedToken = parseJwt(token); // Use parseJwt function to decode token
-        if (decodedToken && isAdmin()) { // Check if user is admin
+
+        setIsLoggedIn(true);
+        setIsAdmin(currentAdmin(token));
+
+        const checkCurrentAdmin = currentAdmin(token);
+        if (checkCurrentAdmin === true) {
           navigate("/admin-dashboard");
-        } else {
+        }
+        else{
           navigate("/user-dashboard");
         }
       } else {
